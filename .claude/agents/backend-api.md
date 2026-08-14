@@ -19,10 +19,13 @@ color: blue
 
 Endpoint ที่ระบบนี้ต้องมี:
 - สมัครสมาชิกชมรม + ยืนยันอีเมล
-- สร้าง/แก้ไข/เผยแพร่โพสต์ (เฉพาะ role admin/editor)
-- สร้างกิจกรรม + ปิดรับสมัครอัตโนมัติเมื่อเต็ม capacity
-- ลงชื่อเข้าร่วม/ยกเลิกกิจกรรม
+- สร้าง/แก้ไข/เผยแพร่โพสต์ข่าวสาร (เฉพาะ role admin/editor)
+- สร้าง/แก้ไขค่ายอาสา + ปิดรับสมัครอัตโนมัติเมื่อเต็ม capacity หรือเลย application_deadline
+- สมัครเข้าค่าย (รับทั้งผู้ที่ล็อกอินและบุคคลทั่วไป) / ยกเลิกใบสมัคร
+- ฟอร์มติดต่อสปอนเซอร์ (sponsor_inquiries) — ไม่บังคับล็อกอิน
+- จัดการ site_banners (เฉพาะ admin)
 - อัปเดต notification preferences
-- /api/cron/event-reminder (ป้องกันด้วย CRON_SECRET header)
+- /api/cron/camp-reminder (ป้องกันด้วย CRON_SECRET header) — เตือนล่วงหน้า 3 วัน/1 วัน
+- LINE webhook สำหรับผูก line_user_id เข้ากับ profile (verify signature ก่อนทุกครั้ง)
 
 หลังเขียนเสร็จรัน `npm run typecheck` เสมอ แล้วรายงานผล
