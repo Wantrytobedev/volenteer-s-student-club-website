@@ -1,69 +1,122 @@
-import Image from "next/image";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { th } from "@/lib/i18n/th";
+import { formatCampDateRange, getCampStatus } from "@/lib/camps";
 
-export default function Home() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const { data: camps } = await supabase
+    .from("camps")
+    .select("*")
+    .eq("is_draft", false)
+    .order("starts_at", { ascending: true })
+    .limit(3);
+
+  const upcomingCamps = camps ?? [];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <section className="bg-gradient-to-b from-[#1e3a8a] to-[#2563eb] text-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-200">
+            {th.home.heroEyebrow}
           </p>
+          <h1 className="mt-3 max-w-2xl text-3xl font-bold leading-tight sm:text-5xl">
+            {th.home.heroTitle}
+          </h1>
+          <p className="mt-4 max-w-xl text-base text-blue-100 sm:text-lg">
+            {th.home.heroSubtitle}
+          </p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/camps"
+              className="inline-flex items-center justify-center rounded-md bg-white px-5 py-3 text-sm font-semibold text-[#1e3a8a] hover:bg-blue-50"
+            >
+              {th.home.ctaSeeCamps}
+            </Link>
+            <Link
+              href="/about"
+              className="inline-flex items-center justify-center rounded-md border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10"
+            >
+              {th.home.ctaAbout}
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <h2 className="text-2xl font-bold text-slate-900">
+          {th.home.missionTitle}
+        </h2>
+        <div className="mt-6 grid gap-6 sm:grid-cols-3">
+          {th.home.missionItems.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-lg border border-blue-100 bg-white p-6 shadow-sm"
+            >
+              <p className="font-semibold text-[#1e3a8a]">{item.title}</p>
+              <p className="mt-2 text-sm text-slate-600">{item.description}</p>
+            </div>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="bg-blue-50">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">
+              {th.home.upcomingCampsTitle}
+            </h2>
+            <Link
+              href="/camps"
+              className="text-sm font-semibold text-[#2563eb] hover:underline"
+            >
+              {th.home.seeAllCamps}
+            </Link>
+          </div>
+
+          {upcomingCamps.length === 0 ? (
+            <p className="mt-6 text-sm text-slate-600">
+              {th.home.upcomingCampsEmpty}
+            </p>
+          ) : (
+            <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              {upcomingCamps.map((camp) => {
+                const status = getCampStatus(camp);
+                return (
+                  <Link
+                    key={camp.id}
+                    href={`/camps/${camp.slug}`}
+                    className="block rounded-lg border border-blue-100 bg-white p-6 shadow-sm transition hover:shadow-md"
+                  >
+                    <span
+                      className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
+                        status === "open"
+                          ? "bg-green-100 text-green-700"
+                          : status === "past"
+                            ? "bg-slate-100 text-slate-600"
+                            : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {status === "open"
+                        ? th.camps.statusOpen
+                        : status === "past"
+                          ? th.camps.statusPast
+                          : th.camps.statusUpcoming}
+                    </span>
+                    <p className="mt-3 font-semibold text-slate-900">
+                      {camp.title}
+                    </p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      {formatCampDateRange(camp)}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

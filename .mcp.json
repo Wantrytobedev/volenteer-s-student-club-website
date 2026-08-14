@@ -3,7 +3,7 @@
     "supabase": {
       "command": "npx",
       "args": ["-y", "@supabase/mcp-server-supabase@latest", "--read-only",
-               "--project-ref", "YOUR_PROJECT_REF"],
+               "--project-ref", "bsgwqbgifjotxcwhzhnp"],
       "env": { "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}" }
     },
     "playwright": {
